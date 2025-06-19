@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Emotion Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Color Palette (unchanged from original dashboard and home pages) */
+        :root {
+            /* Primary Colors */
+            --primary-900: #0c1426;
+            --primary-800: #1e293b;
+            --primary-700: #334155;
+            --primary-600: #475569;
+            --primary-500: #64748b;
+
+            /* Accent Colors */
+            --accent-500: #06b6d4;
+            --accent-400: #22d3ee;
+            --accent-300: #67e8f9;
+            --accent-200: #a5f3fc;
+            --accent-100: #cffafe;
+
+            /* Secondary Colors */
+            --secondary-500: #8b5cf6;
+            --secondary-400: #a78bfa;
+            --secondary-300: #c4b5fd;
+
+            /* Success Colors */
+            --success-500: #10b981;
+            --success-400: #34d399;
+            --success-300: #6ee7b7;
+
+            /* Warning Colors */
+            --warning-500: #f59e0b;
+            --warning-400: #fbbf24;
+
+            /* Error Colors */
+            --error-500: #ef4444;
+            --error-400: #f87171;
+
+            /* Neutral Colors */
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+
+            /* Glass Effect */
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(
+                135deg,
+                var(--primary-900) 0%,
+                var(--primary-800) 50%,
+                var(--primary-700) 100%
+            );
+            min-height: 100vh;
+            color: var(--neutral-100);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Navbar Styles from Dashboard with Home Page Link Styles */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1100;
+            transition: all 0.3s ease;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .logo {
+            font-family: "Poppins", sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(
+                135deg,
+                var(--accent-400),
+                var(--secondary-400)
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .logo:hover {
+            background: linear-gradient(
+                135deg,
+                var(--accent-300),
+                var(--secondary-300)
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* Navbar Link Styles from Home Page */
+        nav a {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--neutral-300);
+            position: relative;
+            padding: 8px 0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        nav a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(
+                90deg,
+                var(--accent-400),
+                var(--secondary-400)
+            );
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        nav a:hover::after,
+        nav a:focus::after,
+        nav a.active::after {
+            width: 100%;
+        }
+
+        nav a:hover,
+        nav a:focus {
+            color: var(--neutral-100);
+        }
+
+        nav a.active {
+            color: var(--accent-400);
+        }
+
+        .material-icons.md-18 {
+            font-size: 18px;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--accent-200);
+            font-size: 0.9rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(
+                135deg,
+                var(--accent-500),
+                var(--secondary-500)
+            );
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--accent-400);
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            display: none;
+            flex-direction: column;
+            padding: 20px 24px;
+            gap: 16px;
+            z-index: 1200;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .mobile-nav.show {
+            display: flex;
+        }
+
+        /* Mobile Nav Link Styles from Home Page */
+        .mobile-nav a {
+            font-family: 'Inter', sans-serif;
+            color: var(--neutral-200);
+            font-size: 1.1rem;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-nav a:hover,
+        .mobile-nav a:focus {
+            color: var(--accent-300);
+        }
+
+        /* Main content offset for fixed header */
+        main {
+            margin-top: 70px;
+        }
+
+        /* Responsive Design for Navbar */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .header-inner {
+                padding: 0 16px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .mobile-menu-button {
+                display: block;
+            }
+
+            .user-info {
+                display: none;
+            }
+        }
+
+        /* Original Dashboard Styles */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: clamp(12px, 3vw, 20px);
+        }
+
+        .dashboard-main {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: clamp(20px, 5vw, 30px);
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: clamp(16px, 4vw, 24px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: clamp(12px, 3vw, 20px);
+        }
+
+        .card-header h2 {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: 600;
+            color: var(--neutral-100);
+        }
+
+        .overview-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: clamp(16px, 4vw, 20px);
+        }
+
+        .overview-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: clamp(16px, 4vw, 20px);
+        }
+
+        .card-icon {
+            width: clamp(48px, 12vw, 60px);
+            height: clamp(48px, 12vw, 60px);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            background: linear-gradient(135deg, var(--accent-500), var(--secondary-500));
+            color: white;
+        }
+
+        .card-content h3 {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            font-weight: 500;
+            color: var(--neutral-300);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: clamp(1.4rem, 5vw, 1.8rem);
+            font-weight: 700;
+            color: var(--neutral-100);
+        }
+
+        .chart-section {
+            grid-column: 1 / -1;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chart-btn {
+            padding: clamp(6px, 2vw, 8px) clamp(12px, 3vw, 16px);
+            border: none;
+            border-radius: 8px;
+            background: var(--neutral-700);
+            color: var(--neutral-300);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            min-height: 36px;
+        }
+
+        .chart-btn:hover {
+            background: var(--neutral-600);
+            color: var(--neutral-100);
+        }
+
+        .chart-btn.active {
+            background: linear-gradient(135deg, var(--accent-500), var(--secondary-500));
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            height: clamp(200px, 50vw, 300px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .pie-chart {
+            position: relative;
+            width: clamp(120px, 40vw, 200px);
+            height: clamp(120px, 40vw, 200px);
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .pie-chart canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: clamp(20px, 5vw, 40px);
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--neutral-300);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .bar-chart {
+            width: 100%;
+            max-width: clamp(300px, 80vw, 600px);
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .bar-label {
+            min-width: clamp(60px, 15vw, 80px);
+            font-weight: 500;
+            color: var(--neutral-300);
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 24px;
+            background: var(--neutral-700);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-500), var(--secondary-500));
+            width: var(--width);
+            border-radius: 12px;
+            transition: width 1s ease;
+            animation: fillBar 1.5s ease;
+        }
+
+        @keyframes fillBar {
+            from { width: 0; }
+            to { width: var(--width); }
+        }
+
+        .bar-value {
+            min-width: 40px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--neutral-100);
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+        }
+
+        .timeline-section {
+            grid-column: 1 / -1;
+        }
+
+        .timeline-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .timeline-btn {
+            padding: clamp(6px, 2vw, 8px) clamp(12px, 3vw, 16px);
+            border: none;
+            border-radius: 8px;
+            background: var(--neutral-700);
+            color: var(--neutral-300);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            min-height: 36px;
+        }
+
+        .timeline-btn:hover {
+            background: var(--neutral-600);
+            color: var(--neutral-100);
+        }
+
+        .timeline-btn.active {
+            background: linear-gradient(135deg, var(--accent-500), var(--secondary-500));
+            color: white;
+        }
+
+        .timeline-container {
+            max-height: clamp(200px, 50vw, 300px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: clamp(8px, 2vw, 12px) 0;
+            border-bottom: 1px solid var(--neutral-700);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .timeline-date {
+            min-width: clamp(80px, 20vw, 100px);
+            font-weight: 500;
+            color: var(--neutral-300);
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+        }
+
+        .timeline-emotion {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .emotion-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: clamp(0.7rem, 2vw, 0.8rem);
+            font-weight: 500;
+            background: linear-gradient(135deg, var(--accent-500), var(--secondary-500));
+            color: white;
+        }
+
+        .emotion-count {
+            font-weight: 600;
+            color: var(--neutral-100);
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+        }
+
+        .insights-section {
+            grid-column: 1 / -1;
+        }
+
+        .insights-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(250px, 45vw, 300px), 1fr));
+            gap: clamp(16px, 4vw, 20px);
+        }
+
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: clamp(12px, 3vw, 16px);
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary-500);
+        }
+
+        .insight-icon {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            margin-top: 4px;
+            color: var(--secondary-400);
+        }
+
+        .insight-content h4 {
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            font-weight: 600;
+            color: var(--neutral-100);
+            margin-bottom: 4px;
+        }
+
+        .insight-content p {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            color: var(--neutral-300);
+            line-height: 1.4;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: clamp(20px, 10vw, 40px);
+            color: var(--neutral-300);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--accent-500), var(--secondary-500));
+            color: var(--neutral-100);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: var(--glass-shadow);
+            z-index: 1001;
+            font-weight: 500;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            animation: slideInRight 0.3s ease;
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, var(--success-500), var(--success-400));
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, var(--error-500), var(--error-400));
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .overview-section {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .chart-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pie-legend {
+                margin-left: 0;
+                margin-top: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 12px;
+            }
+
+            .overview-section {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 12px;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .insights-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .overview-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .card-icon {
+                margin-bottom: 8px;
+            }
+
+            .bar-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .bar-label {
+                min-width: auto;
+                margin-bottom: 4px;
+            }
+
+            .bar-value {
+                text-align: left;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .timeline-date {
+                min-width: auto;
+                margin-bottom: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chart-controls, .timeline-controls {
+                justify-content: center;
+            }
+
+            .insights-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .dashboard-container {
+                padding: 8px;
+            }
+
+            .card {
+                padding: 8px;
+            }
+
+            .notification {
+                right: 10px;
+                left: 10px;
+                padding: 12px 16px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard-main {
+                grid-template-columns: 2fr 1fr;
+                grid-template-areas: 
+                    "overview overview"
+                    "chart insights"
+                    "timeline timeline";
+            }
+
+            .overview-section {
+                grid-area: overview;
+            }
+
+            .chart-section {
+                grid-area: chart;
+            }
+
+            .timeline-section {
+                grid-area: timeline;
+            }
+
+            .insights-section {
+                grid-area: insights;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+
+        .timeline-item:hover {
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 8px;
+            transform: translateX(4px);
+            transition: all 0.2s ease;
+        }
+
+        .insight-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a href="/home" class="logo">EmotionSense</a>
+            <nav role="navigation" aria-label="Primary navigation">
+                <a href="/home#home" class="nav-link {{ 'active' if request.path == '/home' and not request.path.endswith('dashboard') else '' }}">Home</a>
+                <a href="/home#features" class="nav-link {{ 'active' if request.path == '/home#features' else '' }}">Features</a>
+                <a href="/home#tech" class="nav-link {{ 'active' if request.path == '/home#tech' else '' }}">Tech Stack</a>
+                <a href="/home#live-preview" class="nav-link {{ 'active' if request.path == '/home#live-preview' else '' }}">Live Demo</a>
+                <a href="/home#dashboard" class="nav-link {{ 'active' if request.path.endswith('dashboard') else '' }}">Dashboard</a>
+                <a href="/feedback" class="nav-link {{ 'active' if request.path.endswith('dashboard') else '' }}">Get Feedback</a>
+
+
+                {% if session.logged_in %}
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ (user_name[0].upper()) if user_name else 'U' }}
+                    </div>
+                    <span>{{ user_name or 'User' }}</span>
+                </div>
+                <a href="/logout" class="nav-link">
+                    <span class="material-icons md-18">logout</span>Logout
+                </a>
+                {% else %}
+                <a href="/login" class="nav-link">
+                    <span class="material-icons md-18">login</span>Login
+                </a>
+                <a href="/register" class="nav-link">
+                    <span class="material-icons md-18">person_add</span>Register
+                </a>
+                {% endif %}
+            </nav>
+            <button aria-label="Toggle menu" id="mobile-menu-button" class="mobile-menu-button">
+                ☰
+            </button>
+        </div>
+        <nav id="mobile-menu" class="mobile-nav">
+            <a href="/home#home">Home</a>
+            <a href="/home#features">Features</a>
+            <a href="/home#tech">Tech Stack</a>
+            <a href="/home#live-preview">Live Demo</a>
+            <a href="/home#dashboard">Dashboard</a>
+            <a href="/feedback" class="nav-link {{ 'active' if request.path.endswith('dashboard') else '' }}">Get Feedback</a>
+
+            {% if session.logged_in %}
+            <a href="/logout">Logout</a>
+            {% else %}
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <main class="dashboard-main">
+            <section class="overview-section">
+                <div class="card overview-card">
+                    <div class="card-icon happy-icon">😊</div>
+                    <div class="card-content">
+                        <h3>Total Emotions</h3>
+                        <p class="metric-value" id="total-emotions">{{ emotion_data|length if emotion_data else 0 }}</p>
+                    </div>
+                </div>
+                <div class="card overview-card">
+                    <div class="card-icon trend-icon">📈</div>
+                    <div class="card-content">
+                        <h3>Most Common</h3>
+                        <p class="metric-value" id="most-common">
+                            {% if emotion_data %}
+                                {{ emotion_data[0].emotion }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="card overview-card">
+                    <div class="card-icon calendar-icon">📅</div>
+                    <div class="card-content">
+                        <h3>Days Tracked</h3>
+                        <p class="metric-value" id="days-tracked">
+                            {% if timeline_data %}
+                                {{ timeline_data|map(attribute='date')|unique|list|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <section class="chart-section">
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h2>Emotion Distribution</h2>
+                        <div class="chart-controls">
+                            <button class="chart-btn active" data-chart="pie">Pie</button>
+                            <button class="chart-btn" data-chart="bar">Bar</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="pie-chart" id="pie-chart">
+                            <canvas id="pieCanvas"></canvas>
+                        </div>
+                        <div class="pie-legend" id="pie-legend">
+                            {% if emotion_data %}
+                                {% set total = emotion_data|sum(attribute='count') %}
+                                {% set colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'] %}
+                                {% for emotion in emotion_data %}
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: {{ colors[loop.index0 % colors|length] }};"></div>
+                                        <span>{{ emotion.emotion }}: {{ emotion.count }} ({{ (emotion.count / total * 100)|round(1) }}%)</span>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="bar-chart hidden" id="bar-chart">
+                            {% if emotion_data %}
+                                {% set max_count = emotion_data|max(attribute='count') %}
+                                {% for emotion in emotion_data %}
+                                    <div class="bar-item">
+                                        <div class="bar-label">{{ emotion.emotion }}</div>
+                                        <div class="bar-container">
+                                            <div class="bar-fill" 
+                                                 style="--width: {{ (emotion.count / max_count.count * 100)|round(1) }}%;"
+                                                 data-count="{{ emotion.count }}">
+                                            </div>
+                                        </div>
+                                        <div class="bar-value">{{ emotion.count }}</div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="timeline-section">
+                <div class="card timeline-card">
+                    <div class="card-header">
+                        <h2>Emotion Timeline</h2>
+                        <div class="timeline-controls">
+                            <button class="timeline-btn active" data-period="week">Week</button>
+                            <button class="timeline-btn" data-period="month">Month</button>
+                        </div>
+                    </div>
+                    <div class="timeline-container">
+                        {% if timeline_data %}
+                            {% for item in timeline_data %}
+                                <div class="timeline-item" data-date="{{ item.date }}">
+                                    <div class="timeline-date">{{ item.date }}</div>
+                                    <div class="timeline-emotion {{ item.emotion|lower }}">
+                                        <span class="emotion-badge">{{ item.emotion }}</span>
+                                        <span class="emotion-count">{{ item.count }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-data">
+                                <p>No emotion data available yet. Start tracking your emotions!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+            <section class="insights-section">
+                <div class="card insights-card">
+                    <div class="card-header">
+                        <h2>Quick Tips</h2>
+                    </div>
+                    <div class="insights-container">
+                        <div class="insight-item">
+                            <div class="insight-icon">🎯</div>
+                            <div class="insight-content">
+                                <h4>Consistent Tracking</h4>
+                                <p>Track emotions daily for more accurate insights about your emotional patterns.</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-icon">⚡</div>
+                            <div class="insight-content">
+                                <h4>Mindful Awareness</h4>
+                                <p>Use emotion tracking as a tool for mindfulness and self-reflection.</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-icon">📊</div>
+                            <div class="insight-content">
+                                <h4>Pattern Analysis</h4>
+                                <p>Look for patterns in your emotions to identify triggers and positive influences.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Emotion data from Flask template
+        const emotionData = [
+            {% if emotion_data %}
+                {% set total = emotion_data|sum(attribute='count') %}
+                {% for emotion in emotion_data %}
+                    {
+                        emotion: "{{ emotion.emotion }}",
+                        count: {{ emotion.count }},
+                        percentage: {{ (emotion.count / total * 100)|round(1) }}
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            {% endif %}
+        ];
+
+        // Colors for pie chart
+        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+
+        // Draw pie chart using Canvas
+        function drawPieChart() {
+            const canvas = document.getElementById('pieCanvas');
+            if (!canvas || emotionData.length === 0) return;
+            
+            const container = canvas.parentElement;
+            const size = Math.min(container.offsetWidth, container.offsetHeight);
+            canvas.width = size;
+            canvas.height = size;
+            
+            const ctx = canvas.getContext('2d');
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const radius = size * 0.4;
+            
+            let currentAngle = -Math.PI / 2;
+            
+            emotionData.forEach((data, index) => {
+                const sliceAngle = (data.percentage / 100) * 2 * Math.PI;
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.fill();
+                
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                currentAngle += sliceAngle;
+            });
+        }
+
+        // Chart switching functionality
+        document.querySelectorAll('.chart-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const chartType = this.dataset.chart;
+                const pieChart = document.getElementById('pie-chart');
+                const pieLegend = document.getElementById('pie-legend');
+                const barChart = document.getElementById('bar-chart');
+                
+                if (chartType === 'pie') {
+                    pieChart.classList.remove('hidden');
+                    pieLegend.classList.remove('hidden');
+                    barChart.classList.add('hidden');
+                    drawPieChart();
+                } else {
+                    pieChart.classList.add('hidden');
+                    pieLegend.classList.add('hidden');
+                    barChart.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Timeline period switching
+        document.querySelectorAll('.timeline-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.timeline-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Add hover effects and animations
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Mobile menu functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            const expanded = mobileMenuButton.getAttribute('aria-expanded') === 'true' || false;
+            mobileMenuButton.setAttribute('aria-expanded', !expanded);
+            mobileMenu.classList.toggle('show');
+        });
+
+        // Smooth scrolling and active nav links
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section[id]');
+
+        function updateActiveNavLink() {
+            const currentPath = window.location.pathname + window.location.hash;
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const linkHref = link.getAttribute('href');
+
+                // Check if the link matches the current URL or hash
+                if (currentPath.includes('dashboard') && linkHref.includes('dashboard')) {
+                    link.classList.add('active');
+                } else if (linkHref === `#${currentPath.split('#')[1]}`) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Fallback to scroll-based logic for single-page sections
+            let currentSection = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (window.pageYOffset >= sectionTop) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveNavLink);
+
+        // Initialize and handle resize
+        window.addEventListener('load', () => {
+            drawPieChart();
+            updateActiveNavLink();
+            document.querySelectorAll('.bar-fill').forEach(bar => {
+                bar.style.animation = 'fillBar 1.5s ease';
+            });
+        });
+
+        window.addEventListener('resize', drawPieChart);
+    </script>
+</body>
+</html>

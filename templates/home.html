@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      {% if session.logged_in %}Welcome {{ user_name }} - {% endif %}Real-Time
+      Emotion Detection & Feedback System | EmotionSense
+    </title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <style>
+      /* Enhanced Color Palette */
+      :root {
+        /* Primary Colors - Deep Blue to Cyan Gradient */
+        --primary-900: #0c1426;
+        --primary-800: #1e293b;
+        --primary-700: #334155;
+        --primary-600: #475569;
+        --primary-500: #64748b;
+
+        /* Accent Colors - Vibrant Cyan to Blue */
+        --accent-500: #06b6d4;
+        --accent-400: #22d3ee;
+        --accent-300: #67e8f9;
+        --accent-200: #a5f3fc;
+        --accent-100: #cffafe;
+
+        /* Secondary Colors - Purple to Pink */
+        --secondary-500: #8b5cf6;
+        --secondary-400: #a78bfa;
+        --secondary-300: #c4b5fd;
+
+        /* Success Colors - Emerald */
+        --success-500: #10b981;
+        --success-400: #34d399;
+        --success-300: #6ee7b7;
+
+        /* Warning Colors - Amber */
+        --warning-500: #f59e0b;
+        --warning-400: #fbbf24;
+
+        /* Error Colors - Red */
+        --error-500: #ef4444;
+        --error-400: #f87171;
+
+        /* Neutral Colors */
+        --neutral-50: #f8fafc;
+        --neutral-100: #f1f5f9;
+        --neutral-200: #e2e8f0;
+        --neutral-300: #cbd5e1;
+        --neutral-400: #94a3b8;
+        --neutral-500: #64748b;
+        --neutral-600: #475569;
+        --neutral-700: #334155;
+        --neutral-800: #1e293b;
+        --neutral-900: #0f172a;
+
+        /* Glass Effect */
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Reset and base */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        font-family: "Inter", sans-serif;
+        font-size: 16px;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: linear-gradient(
+          135deg,
+          var(--primary-900) 0%,
+          var(--primary-800) 50%,
+          var(--primary-700) 100%
+        );
+        color: var(--neutral-100);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        min-height: 100vh;
+      }
+
+      a {
+        color: var(--accent-400);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      a:hover,
+      a:focus {
+        color: var(--accent-300);
+        outline: none;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      /* Container */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* Header - Keep same structure */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: saturate(180%) blur(20px);
+        border-bottom: 1px solid var(--glass-border);
+        z-index: 1100;
+        transition: all 0.3s ease;
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 70px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .logo {
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--accent-400),
+          var(--secondary-400)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+      }
+
+      .logo:hover {
+        background: linear-gradient(
+          135deg,
+          var(--accent-300),
+          var(--secondary-300)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      nav a {
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--neutral-300);
+        position: relative;
+        padding: 8px 0;
+        transition: all 0.3s ease;
+      }
+
+      nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--accent-400),
+          var(--secondary-400)
+        );
+        transition: width 0.3s ease;
+        border-radius: 2px;
+      }
+
+      nav a:hover::after,
+      nav a:focus::after,
+      nav a.active::after {
+        width: 100%;
+      }
+
+      nav a.active {
+        color: var(--accent-400);
+      }
+
+      .material-icons.md-18 {
+        font-size: 18px;
+        vertical-align: middle;
+        margin-right: 6px;
+      }
+
+      /* User Info */
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--accent-200);
+        font-size: 0.9rem;
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(
+          135deg,
+          var(--accent-500),
+          var(--secondary-500)
+        );
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+      }
+
+      /* Mobile menu - Keep same structure */
+      .mobile-menu-button {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--accent-400);
+        font-size: 28px;
+        cursor: pointer;
+      }
+
+      .mobile-nav {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: rgba(15, 23, 42, 0.98);
+        backdrop-filter: blur(20px);
+        display: none;
+        flex-direction: column;
+        padding: 20px 24px;
+        gap: 16px;
+        z-index: 1200;
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .mobile-nav.show {
+        display: flex;
+      }
+
+      .mobile-nav a {
+        color: var(--neutral-200);
+        font-size: 1.1rem;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .mobile-nav a:hover,
+      .mobile-nav a:focus {
+        color: var(--accent-300);
+      }
+
+      /* Main content offset for fixed header */
+      main {
+        margin-top: 70px;
+      }
+
+      /* Hero Section */
+      .hero {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        padding: 100px 24px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-900) 0%,
+          var(--primary-800) 30%,
+          var(--primary-700) 70%,
+          var(--accent-500) 100%
+        );
+        color: var(--neutral-100);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 30% 20%,
+            rgba(6, 182, 212, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 70% 80%,
+            rgba(139, 92, 246, 0.1) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+      }
+
+      .hero-content {
+        max-width: 600px;
+        z-index: 2;
+        position: relative;
+      }
+
+      .hero-title {
+        font-family: "Poppins", sans-serif;
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+        line-height: 1.1;
+        background: linear-gradient(
+          135deg,
+          var(--neutral-50),
+          var(--accent-200)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-subtitle {
+        font-size: 1.3rem;
+        margin-bottom: 40px;
+        color: var(--neutral-300);
+        line-height: 1.6;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--accent-500),
+          var(--secondary-500)
+        );
+        border: none;
+        border-radius: 16px;
+        padding: 18px 40px;
+        font-weight: 600;
+        font-family: "Poppins", sans-serif;
+        font-size: 1.125rem;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 8px 32px rgba(6, 182, 212, 0.4);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-primary::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .btn-primary:hover::before {
+        left: 100%;
+      }
+
+      .btn-primary:hover,
+      .btn-primary:focus {
+        background: linear-gradient(
+          135deg,
+          var(--accent-400),
+          var(--secondary-400)
+        );
+        box-shadow: 0 12px 40px rgba(6, 182, 212, 0.6);
+        transform: translateY(-3px);
+        outline: none;
+        color: white;
+      }
+
+      .hero-illustration {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        position: relative;
+      }
+
+      .hero-illustration img {
+        max-width: 500px;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+          0 0 40px rgba(6, 182, 212, 0.2);
+        border: 1px solid var(--glass-border);
+      }
+
+      /* Features Section */
+      .features {
+        background: linear-gradient(
+          135deg,
+          var(--primary-800),
+          var(--primary-700)
+        );
+        padding: 120px 24px;
+        position: relative;
+      }
+
+      .section-title {
+        text-align: center;
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 60px;
+        background: linear-gradient(
+          135deg,
+          var(--accent-400),
+          var(--secondary-400)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .features-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 32px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .feature-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        padding: 32px 28px;
+        border-radius: 20px;
+        border: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--accent-500),
+          var(--secondary-500)
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .feature-card:hover::before {
+        opacity: 1;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2);
+        border-color: var(--accent-400);
+      }
+
+      .feature-icon {
+        font-size: 48px;
+        background: linear-gradient(
+          135deg,
+          var(--accent-400),
+          var(--secondary-400)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 20px;
+      }
+
+      .feature-title {
+        font-weight: 700;
+        font-size: 1.4rem;
+        margin-bottom: 16px;
+        color: var(--neutral-100);
+        font-family: "Poppins", sans-serif;
+      }
+
+      .feature-desc {
+        font-size: 1rem;
+        color: var(--neutral-300);
+        line-height: 1.6;
+      }
+
+      /* Tech Stack Section */
+      .techstack {
+        padding: 120px 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        color: var(--neutral-200);
+      }
+
+      .tech-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .tech-item {
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 24px 20px;
+        text-align: center;
+        font-weight: 600;
+        color: var(--neutral-200);
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .tech-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          var(--accent-500),
+          var(--secondary-500)
+        );
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: -1;
+      }
+
+      .tech-item:hover::before {
+        left: 0;
+        opacity: 0.1;
+      }
+
+      .tech-item:hover {
+        color: var(--accent-300);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(6, 182, 212, 0.2);
+        border-color: var(--accent-400);
+      }
+
+      /* Live Preview Section */
+      .live-preview {
+        padding: 120px 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        color: var(--neutral-100);
+      }
+
+      .webcam-container {
+        position: relative;
+        max-width: 700px;
+        margin: 0 auto;
+        border-radius: 24px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        padding: 32px;
+        border: 1px solid var(--glass-border);
+      }
+
+      video,
+      #webcam-placeholder {
+        width: 100%;
+        display: none;
+        border-radius: 16px;
+      }
+
+      video.active,
+      #webcam-placeholder.active {
+        display: block;
+      }
+
+      .overlay-text {
+        position: relative;
+        background: linear-gradient(
+          135deg,
+          var(--accent-500),
+          var(--secondary-500)
+        );
+        color: white;
+        font-weight: 700;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-family: "Poppins", sans-serif;
+        font-size: 1.125rem;
+        user-select: none;
+        box-shadow: 0 4px 16px rgba(6, 182, 212, 0.3);
+      }
+
+      .btn-toggle-camera {
+        background: linear-gradient(
+          135deg,
+          var(--accent-500),
+          var(--secondary-500)
+        );
+        border: none;
+        border-radius: 16px;
+        padding: 16px 32px;
+        font-weight: 600;
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
+        transition: all 0.3s ease;
+        user-select: none;
+        min-width: 220px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-toggle-camera::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .btn-toggle-camera:hover::before {
+        left: 100%;
+      }
+
+      .btn-toggle-camera:hover,
+      .btn-toggle-camera:focus {
+        background: linear-gradient(
+          135deg,
+          var(--accent-400),
+          var(--secondary-400)
+        );
+        box-shadow: 0 12px 32px rgba(6, 182, 212, 0.6);
+        transform: translateY(-2px);
+        outline: none;
+      }
+
+      /* Dashboard Preview Section */
+      .dashboard-preview {
+        padding: 120px 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        color: var(--neutral-100);
+      }
+
+      .dashboard-container {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 40px;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.1);
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 32px;
+        margin-bottom: 32px;
+      }
+
+      .chart-container {
+        background: rgba(6, 182, 212, 0.05);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        position: relative;
+        min-height: 320px;
+      }
+
+      .chart-title {
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: var(--accent-400);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .mock-chart {
+        width: 100%;
+        height: 260px;
+        background: linear-gradient(
+          135deg,
+          rgba(6, 182, 212, 0.1),
+          rgba(139, 92, 246, 0.1)
+        );
+        border-radius: 12px;
+        display: flex;
+        align-items: end;
+        justify-content: space-around;
+        padding: 20px;
+        position: relative;
+      }
+
+      .chart-bar {
+        background: linear-gradient(
+          to top,
+          var(--accent-500),
+          var(--secondary-400)
+        );
+        border-radius: 6px 6px 0 0;
+        width: 45px;
+        transition: all 0.3s ease;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+      }
+
+      .chart-bar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(6, 182, 212, 0.5);
+      }
+
+      .chart-bar::after {
+        content: attr(data-emotion);
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.7rem;
+        color: var(--neutral-300);
+        white-space: nowrap;
+      }
+
+      .stats-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .stat-card {
+        background: rgba(139, 92, 246, 0.05);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          var(--accent-400),
+          var(--secondary-400)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: var(--neutral-300);
+        margin-top: 4px;
+      }
+
+      .dashboard-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn-secondary {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 12px 24px;
+        color: var(--neutral-200);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        backdrop-filter: blur(20px);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(6, 182, 212, 0.1);
+        border-color: var(--accent-400);
+        color: var(--accent-300);
+        transform: translateY(-1px);
+      }
+
+      /* Auth Sections */
+      .auth-section {
+        padding: 100px 24px;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .auth-form {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 40px;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.1);
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--neutral-200);
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--neutral-100);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--accent-400);
+        box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      /* Footer */
+      footer {
+        background: linear-gradient(
+          135deg,
+          var(--primary-900),
+          var(--primary-800)
+        );
+        padding: 80px 24px 40px;
+        color: var(--neutral-400);
+        border-top: 1px solid var(--glass-border);
+      }
+
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+      }
+
+      .footer-logo {
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--accent-400),
+          var(--secondary-400)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 20px;
+      }
+
+      .footer-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .footer-list li {
+        margin-bottom: 12px;
+      }
+
+      .footer-list a {
+        color: var(--neutral-400);
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .footer-list a:hover {
+        color: var(--accent-300);
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 16px;
+        margin-top: 20px;
+      }
+
+      .social-icons a {
+        width: 44px;
+        height: 44px;
+        background: var(--glass-bg);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-400);
+        transition: all 0.3s ease;
+        border: 1px solid var(--glass-border);
+      }
+
+      .social-icons a:hover {
+        background: var(--accent-500);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 16px;
+        }
+
+        .header-inner {
+          padding: 0 16px;
+        }
+
+        nav {
+          display: none;
+        }
+
+        .mobile-menu-button {
+          display: block;
+        }
+
+        .hero {
+          flex-direction: column;
+          padding: 80px 16px;
+          text-align: center;
+          min-height: 85vh;
+        }
+
+        .hero-illustration {
+          margin-top: 40px;
+        }
+
+        .hero-title {
+          font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+          font-size: 1.1rem;
+        }
+
+        .section-title {
+          font-size: 2rem;
+        }
+
+        .features-container {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+
+        .tech-list {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .dashboard-container {
+          padding: 24px;
+        }
+
+        .dashboard-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .user-info {
+          display: none;
+        }
+      }
+
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .features-container {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .tech-list {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* Scroll animations */
+      .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+      }
+
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Loading animation for chart bars */
+      .chart-bar {
+        opacity: 0;
+        transform: scaleY(0);
+        transform-origin: bottom;
+        animation: chartBarLoad 0.6s ease forwards;
+      }
+
+      @keyframes chartBarLoad {
+        to {
+          opacity: 1;
+          transform: scaleY(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <a href="#home" class="logo">EmotionSense</a>
+
+        <nav role="navigation" aria-label="Primary navigation">
+          <a href="#home" class="nav-link active">Home</a>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#tech" class="nav-link">Tech Stack</a>
+          <a href="#live-preview" class="nav-link">Live Demo</a>
+          <a href="#dashboard" class="nav-link">Dashboard</a>
+
+          {% if not session.logged_in %}
+          <a href="/login" class="nav-link">
+            <span class="material-icons md-18">login</span>Login
+          </a>
+          <a href="/register" class="nav-link">
+            <span class="material-icons md-18">person_add</span>Register
+          </a>
+          {% endif %} {% if session.logged_in %}
+          <div class="user-info">
+            <div class="user-avatar">
+              {{ (user_name[0].upper()) if user_name else 'U' }}
+            </div>
+            <span> {{ user_name or 'User' }} </span>
+          </div>
+
+          <a href="/logout" class="nav-link">
+            <span class="material-icons md-18">logout</span>Logout
+          </a>
+          {% endif %}
+        </nav>
+
+        <button
+          aria-label="Toggle menu"
+          id="mobile-menu-button"
+          class="mobile-menu-button"
+        >
+          &#9776;
+        </button>
+      </div>
+
+      <nav id="mobile-menu" class="mobile-nav">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#tech">Tech Stack</a>
+        <a href="#live-preview">Live Demo</a>
+        <a href="#dashboard">Dashboard</a>
+
+        {% if session.logged_in %}
+        <a href="/logout">Logout</a>
+        {% endif %} {% if not session.logged_in %}
+        <a href="#login">Login</a>
+        <a href="#register">Register</a>
+        {% endif %}
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero Section -->
+      <section id="home" class="hero container">
+        <div class="hero-content fade-in">
+          <h1 class="hero-title">
+            Real-Time Emotion Detection & Feedback System
+          </h1>
+          <p class="hero-subtitle">
+            Harness AI-powered emotion recognition to understand user feelings
+            as they happen. Register, track your emotional trends, and get
+            instant feedback with our cutting-edge technology.
+          </p>
+          {% if session.logged_in %}
+          <a href="/stream" class="btn-primary">Start Detection</a>
+          {% else %}
+          <a href="#live-preview" class="btn-primary">Get Started</a>
+          {% endif %}
+        </div>
+        <div class="hero-illustration fade-in">
+          <img
+            src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ce3ab5a7-3d01-4db8-977f-4ee97615eb08.png"
+            alt="Live emotion detection demo showing a webcam feed with emotion overlay"
+          />
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section id="features" class="features">
+        <h2 class="section-title fade-in">Key Features</h2>
+        <div class="features-container">
+          <article class="feature-card fade-in">
+            <span class="material-icons feature-icon">videocam</span>
+            <h3 class="feature-title">Live Webcam Feed + Emotion Overlay</h3>
+            <p class="feature-desc">
+              Real-time facial emotion detection using OpenCV with Haar cascades
+              and DNN overlays for accuracy.
+            </p>
+          </article>
+
+          <article class="feature-card fade-in">
+            <span class="material-icons feature-icon">timeline</span>
+            <h3 class="feature-title">Track Emotional Trends</h3>
+            <p class="feature-desc">
+              Monitor your mood patterns over time with detailed weekly
+              analytics per user.
+            </p>
+          </article>
+
+          <article class="feature-card fade-in">
+            <span class="material-icons feature-icon">account_circle</span>
+            <h3 class="feature-title">User Registration & Login</h3>
+            <p class="feature-desc">
+              Secure account management with personalized emotion logs stored
+              safely.
+            </p>
+          </article>
+
+          <article class="feature-card fade-in">
+            <span class="material-icons feature-icon">storage</span>
+            <h3 class="feature-title">Emotion Logs in MySQL</h3>
+            <p class="feature-desc">
+              Integrated backend database with timestamped emotion records for
+              data analysis.
+            </p>
+          </article>
+
+          <article class="feature-card fade-in">
+            <span class="material-icons feature-icon">insert_chart</span>
+            <h3 class="feature-title">Visualize Weekly Trends</h3>
+            <p class="feature-desc">
+              Interactive matplotlib charts display patterns of emotional states
+              in your dashboard.
+            </p>
+          </article>
+
+          <article class="feature-card fade-in">
+            <span class="material-icons feature-icon">psychology</span>
+            <h3 class="feature-title">AI-Powered Insights</h3>
+            <p class="feature-desc">
+              Get personalized feedback and recommendations based on your
+              emotional patterns.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Tech Stack Section -->
+      <section id="tech" class="techstack">
+        <h2 class="section-title fade-in">Technology Stack</h2>
+        <div class="tech-list">
+          <div class="tech-item fade-in">Flask (Python Web Framework)</div>
+          <div class="tech-item fade-in">
+            OpenCV (Real-Time Computer Vision)
+          </div>
+          <div class="tech-item fade-in">Haar & DNN Face Detection</div>
+          <div class="tech-item fade-in">CNN Emotion Classification Model</div>
+          <div class="tech-item fade-in">MySQL Database</div>
+          <div class="tech-item fade-in">Matplotlib Data Visualization</div>
+        </div>
+      </section>
+
+      <!-- Live Preview Section -->
+      <section id="live-preview" class="live-preview">
+        <h2 class="section-title fade-in">Demo Webcam Emotion Detection</h2>
+        <div class="webcam-container fade-in">
+          <button id="camera-toggle-btn" class="btn-toggle-camera">
+            {% if session.logged_in %}Turn On Camera{% else %}<a href="/login" class="btn-primary">Login to Enable Camera</a>
+            {% endif %}
+          </button>
+           
+          <video id="webcam" autoplay playsinline></video>
+          <div class="overlay-text" id="emotion-label" hidden>
+            Detecting emotion...
+          </div>
+
+          <div id="webcam-placeholder" class="active">
+            <img
+              src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4ca2d276-2748-44f2-91b0-37dd73860927.png"
+              alt="Webcam feed placeholder showing emotion detection interface"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Preview Section -->
+      <section id="dashboard" class="dashboard-preview">
+        <h2 class="section-title fade-in">Dashboard Preview</h2>
+        <div class="dashboard-container fade-in">
+          <div class="dashboard-grid">
+            <div class="chart-container">
+              <div class="chart-title">
+                <span class="material-icons">bar_chart</span>
+                Weekly Emotion Trends
+              </div>
+              <div class="mock-chart">
+                <div
+                  class="chart-bar"
+                  style="height: 65%; animation-delay: 0.1s"
+                  data-emotion="Happy"
+                ></div>
+                <div
+                  class="chart-bar"
+                  style="height: 35%; animation-delay: 0.2s"
+                  data-emotion="Sad"
+                ></div>
+                <div
+                  class="chart-bar"
+                  style="height: 50%; animation-delay: 0.3s"
+                  data-emotion="Neutral"
+                ></div>
+                <div
+                  class="chart-bar"
+                  style="height: 25%; animation-delay: 0.4s"
+                  data-emotion="Angry"
+                ></div>
+                <div
+                  class="chart-bar"
+                  style="height: 40%; animation-delay: 0.5s"
+                  data-emotion="Surprised"
+                ></div>
+                <div
+                  class="chart-bar"
+                  style="height: 30%; animation-delay: 0.6s"
+                  data-emotion="Fear"
+                ></div>
+                <div
+                  class="chart-bar"
+                  style="height: 45%; animation-delay: 0.7s"
+                  data-emotion="Disgust"
+                ></div>
+              </div>
+            </div>
+
+            <div class="stats-panel">
+              <div class="stat-card">
+                <div class="stat-value">
+                  {{ session.total_sessions or '12' }}
+                </div>
+                <div class="stat-label">Total Sessions</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">
+                  {{ session.avg_confidence or '92' }}%
+                </div>
+                <div class="stat-label">Avg Confidence</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">
+                  {{ session.dominant_emotion or 'Happy' }}
+                </div>
+                <div class="stat-label">Dominant Emotion</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-actions">
+            {% if session.logged_in %}
+            <a href="/dashboard" class="btn-primary">
+              <span class="material-icons">dashboard</span>
+              View Full Dashboard
+            </a>
+            <a href="/stream" class="btn-secondary">
+              <span class="material-icons">videocam</span>
+              Start New Session
+            </a>
+            {% else %}
+            <a href="/login" class="btn-primary">
+              <span class="material-icons">login</span>
+              Login to View Dashboard
+            </a>
+            <a href="/register" class="btn-secondary">
+              <span class="material-icons">person_add</span>
+              Create Account
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <!-- Auth Sections -->
+      <!-- {% if not session.logged_in %}
+      <section id="login" class="auth-section">
+        <div class="auth-form fade-in">
+          <h2
+            style="
+              color: var(--accent-400);
+              font-family: 'Poppins', sans-serif;
+              font-weight: 700;
+              margin-bottom: 24px;
+              text-align: center;
+            "
+          >
+            Login to Your Account
+          </h2>
+          <form action="/login" method="POST">
+            <div class="form-group">
+              <label for="login-email" class="form-label">Email Address</label>
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                class="form-input"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="login-password" class="form-label">Password</label>
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                class="form-input"
+                required
+              />
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%">
+              Login
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <section id="register" class="auth-section">
+        <div class="auth-form fade-in">
+          <h2
+            style="
+              color: var(--accent-400);
+              font-family: 'Poppins', sans-serif;
+              font-weight: 700;
+              margin-bottom: 24px;
+              text-align: center;
+            "
+          >
+            Create Your Account
+          </h2>
+          <form action="/register" method="POST">
+            <div class="form-group">
+              <label for="reg-name" class="form-label">Full Name</label>
+              <input
+                type="text"
+                id="reg-name"
+                name="name"
+                class="form-input"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="reg-email" class="form-label">Email Address</label>
+              <input
+                type="email"
+                id="reg-email"
+                name="email"
+                class="form-input"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="reg-password" class="form-label">Password</label>
+              <input
+                type="password"
+                id="reg-password"
+                name="password"
+                class="form-input"
+                required
+              />
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%">
+              Create Account
+            </button>
+          </form>
+        </div>
+      </section>
+      {% endif %} --> -->
+    </main>
+
+    <footer>
+      <div class="footer-container">
+        <div>
+          <div class="footer-logo">EmotionSense</div>
+          <p>© 2025 EmotionSense. All rights reserved.</p>
+          <p>-By Subhadeep Ghosh</p>
+          <p>A next-gen real-time emotion detection and feedback platform.</p>
+          <div class="social-icons">
+            <a href="https://x.com/Subhade50459594?t=6q00n6XC0xU2dltlLGFXgA&s=08" aria-label="Twitter"
+              ><span class="material-icons">alternate_email</span></a
+            >
+            <a href="https://www.facebook.com/share/1AQz1SR12b/" aria-label="Facebook"
+              ><span class="material-icons">facebook</span></a
+            >
+            <a href="https://www.linkedin.com/in/subhadeep-ghosh-a068a0250?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" aria-label="LinkedIn"
+              ><span class="material-icons">business</span></a
+            >
+            <a href="https://www.instagram.com/subha_peroxide?igsh=MW16dG9tbmJ2YWVpaA==" aria-label="Instagram"
+              ><span class="material-icons">camera_alt</span></a
+            >
+          </div>
+        </div>
+
+        <div>
+          <h3
+            style="
+              color: var(--accent-400);
+              font-family: 'Poppins', sans-serif;
+              font-weight: 700;
+              margin-bottom: 16px;
+            "
+          >
+            Quick Links
+          </h3>
+          <ul class="footer-list">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#tech">Tech Stack</a></li>
+            <li><a href="#live-preview">Live Demo</a></li>
+            <li><a href="#dashboard">Dashboard</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3
+            style="
+              color: var(--accent-400);
+              font-family: 'Poppins', sans-serif;
+              font-weight: 700;
+              margin-bottom: 16px;
+            "
+          >
+            Support
+          </h3>
+          <ul class="footer-list">
+            {% if not session.logged_in %}
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+            {% endif %}
+            <li>
+              <a href="mailto:support@emotionsense.com">Contact Support</a>
+            </li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu functionality - Keep same structure
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      mobileMenuButton.addEventListener('click', () => {
+          const expanded = mobileMenuButton.getAttribute('aria-expanded') === 'true' || false;
+          mobileMenuButton.setAttribute('aria-expanded', !expanded);
+          mobileMenu.classList.toggle('show');
+      });
+
+      // Smooth scrolling and active nav links
+      const navLinks = document.querySelectorAll('.nav-link');
+      const sections = document.querySelectorAll('section[id]');
+
+      // Update active nav link on scroll
+      function updateActiveNavLink() {
+          let current = '';
+          sections.forEach(section => {
+              const sectionTop = section.offsetTop - 100;
+              if (window.pageYOffset >= sectionTop) {
+                  current = section.getAttribute('id');
+              }
+          });
+
+          navLinks.forEach(link => {
+              link.classList.remove('active');
+              if (link.getAttribute('href') === `#${current}`) {
+                  link.classList.add('active');
+              }
+          });
+      }
+
+      window.addEventListener('scroll', updateActiveNavLink);
+
+      // Camera functionality - Keep same structure
+      const video = document.getElementById('webcam');
+      const placeholder = document.getElementById('webcam-placeholder');
+      const emotionLabel = document.getElementById('emotion-label');
+      const cameraToggleBtn = document.getElementById('camera-toggle-btn');
+
+      let stream = null;
+      let emotionInterval = null;
+      const isLoggedIn = {% if session.logged_in %}true{% else %}false{% endif %};
+
+      async function startCamera() {
+          if (!isLoggedIn) {
+              alert('Please login to enable camera functionality.');
+              return;
+          }
+
+          try {
+              stream = await navigator.mediaDevices.getUserMedia({ video: true });
+              video.srcObject = stream;
+              video.classList.add('active');
+              placeholder.classList.remove('active');
+              emotionLabel.hidden = false;
+              emotionLabel.textContent = 'Detecting emotion...';
+
+              // Simulate emotion detection
+              const emotions = ['Happy', 'Sad', 'Neutral', 'Surprised', 'Angry', 'Calm'];
+              let index = 0;
+              emotionInterval = setInterval(() => {
+                  emotionLabel.textContent = `Emotion detected: ${emotions[index]}`;
+                  index = (index + 1) % emotions.length;
+              }, 3000);
+
+              cameraToggleBtn.textContent = 'Turn Off Camera';
+          } catch (e) {
+              alert('Could not access camera. Please allow camera permissions.');
+          }
+      }
+
+      function stopCamera() {
+          if (stream) {
+              stream.getTracks().forEach(track => track.stop());
+              stream = null;
+          }
+          video.srcObject = null;
+          video.classList.remove('active');
+          placeholder.classList.add('active');
+          emotionLabel.hidden = true;
+
+          if (emotionInterval) {
+              clearInterval(emotionInterval);
+              emotionInterval = null;
+          }
+
+          cameraToggleBtn.textContent = isLoggedIn ? 'Turn On Camera' : 'Login to Enable Camera';
+      }
+
+      cameraToggleBtn.addEventListener('click', () => {
+          if (!isLoggedIn) {
+              document.querySelector('#login').scrollIntoView({ behavior: 'smooth' });
+              return;
+          }
+
+          if (stream) {
+              stopCamera();
+          } else {
+              startCamera();
+          }
+      });
+
+      // Scroll animations
+      const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('visible');
+              }
+          });
+      }, observerOptions);
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+          observer.observe(el);
+      });
+
+      // Initialize
+      updateActiveNavLink();
+    </script>
+  </body>
+</html>

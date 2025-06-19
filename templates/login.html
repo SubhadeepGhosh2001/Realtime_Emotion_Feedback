@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Login to EmotionSense</title>
+<style>
+  :root {
+    --primary-900: #0c1426;
+    --primary-800: #1e293b;
+    --primary-700: #334155;
+    --primary-600: #475569;
+    --primary-500: #64748b;
+    --accent-500: #06b6d4;
+    --accent-400: #22d3ee;
+    --accent-300: #67e8f9;
+    --accent-200: #a5f3fc;
+    --accent-100: #cffafe;
+    --secondary-500: #8b5cf6;
+    --secondary-400: #a78bfa;
+    --secondary-300: #c4b5fd;
+    --success-500: #10b981;
+    --success-400: #34d399;
+    --success-300: #6ee7b7;
+    --warning-500: #f59e0b;
+    --warning-400: #fbbf24;
+    --error-500: #ef4444;
+    --error-400: #f87171;
+    --neutral-50: #f8fafc;
+    --neutral-100: #f1f5f9;
+    --neutral-200: #e2e8f0;
+    --neutral-300: #cbd5e1;
+    --neutral-400: #94a3b8;
+    --neutral-500: #64748b;
+    --neutral-600: #475569;
+    --neutral-700: #334155;
+    --neutral-800: #1e293b;
+    --neutral-900: #0f172a;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+    color: var(--neutral-100);
+    height: 100vh;
+    width: 100vw;
+    overflow-y: auto;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    justify-content: space-between;
+    z-index: 50;
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+  header .logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--neutral-100);
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  header .logo svg {
+    width: 28px;
+    height: 28px;
+    fill: var(--accent-500);
+  }
+
+  nav.desktop-nav {
+    display: flex;
+    gap: 24px;
+  }
+  nav.desktop-nav a {
+    color: var(--neutral-100);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+  }
+  nav.desktop-nav a:hover,
+  nav.desktop-nav a:focus {
+    color: var(--accent-400);
+  }
+  nav.desktop-nav a::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: var(--accent-400);
+    width: 0%;
+    transition: width 0.3s ease;
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+  }
+  nav.desktop-nav a:hover::after,
+  nav.desktop-nav a:focus::after {
+    width: 100%;
+  }
+
+  .mobile-menu-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+    color: var(--neutral-100);
+    font-size: 28px;
+  }
+
+  nav.mobile-nav {
+    position: fixed;
+    top: 60px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: var(--primary-900);
+    display: none;
+    flex-direction: column;
+    padding: 24px;
+    gap: 24px;
+    z-index: 100;
+    overflow-y: auto;
+  }
+  nav.mobile-nav.show {
+    display: flex;
+  }
+  nav.mobile-nav a {
+    color: var(--neutral-100);
+    font-size: 1.25rem;
+    text-decoration: none;
+  }
+  nav.mobile-nav a:hover,
+  nav.mobile-nav a:focus {
+    color: var(--accent-400);
+  }
+
+  main {
+    height: auto;
+    min-height: calc(100vh - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .login-card {
+    background: var(--neutral-50);
+    border-radius: 24px;
+    box-shadow: var(--glass-shadow);
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    max-width: 900px;
+    width: 100%;
+    overflow: hidden;
+    min-height: 480px;
+    border: 1px solid var(--glass-border);
+  }
+
+  .login-left {
+    background: linear-gradient(135deg, var(--accent-500), var(--secondary-500));
+    color: var(--neutral-100);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px;
+    position: relative;
+  }
+  .login-left img {
+    max-width: 100%;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  .login-left p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.85;
+  }
+
+  .login-right {
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--neutral-50);
+  }
+  .login-right .welcome-label {
+    background: linear-gradient(135deg, var(--accent-500), var(--secondary-500));
+    color: var(--neutral-100);
+    padding: 8px 20px;
+    width: fit-content;
+    border-radius: 16px 0 16px 0;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-bottom: 32px;
+  }
+  .login-right h2 {
+    margin: 0 0 24px 0;
+    font-weight: 600;
+    color: var(--neutral-800);
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  label {
+    font-size: 0.9rem;
+    color: var(--neutral-500);
+    display: block;
+    margin-bottom: 8px;
+  }
+  input[type="text"],
+  input[type="password"] {
+    border: none;
+    border-bottom: 1.5px solid var(--neutral-300);
+    padding: 8px 4px;
+    font-size: 1rem;
+    outline-offset: 4px;
+    transition: border-color 0.3s ease;
+    color: var(--neutral-800);
+  }
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    border-bottom: 1.5px solid var(--accent-500);
+  }
+  button {
+    background: linear-gradient(135deg, var(--accent-500), var(--secondary-500));
+    border: none;
+    color: var(--neutral-100);
+    padding: 12px 0;
+    font-weight: 600;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 1rem;
+  }
+  button:hover,
+  button:focus {
+    background: linear-gradient(135deg, var(--accent-400), var(--secondary-400));
+  }
+  .form-footer {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: var(--neutral-500);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .form-footer a {
+    color: var(--accent-500);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .form-footer a:hover,
+  .form-footer a:focus {
+    color: var(--accent-400);
+  }
+
+  .notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: var(--error-500);
+    color: var(--neutral-100);
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: var(--glass-shadow);
+    display: none;
+    align-items: center;
+    gap: 12px;
+    z-index: 100;
+    max-width: 300px;
+    font-size: 0.9rem;
+    animation: slideIn 0.3s ease forwards;
+  }
+  .notification.show {
+    display: flex;
+  }
+  .notification .material-icons {
+    font-size: 20px;
+  }
+  .notification .close-btn {
+    background: none;
+    border: none;
+    color: var(--neutral-100);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+  }
+  .notification .close-btn:hover {
+    color: var(--neutral-200);
+  }
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 767px) {
+    body {
+      overflow-y: auto;
+    }
+    nav.desktop-nav {
+      display: none;
+    }
+    .mobile-menu-button {
+      display: block;
+    }
+    .login-card {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      max-width: 420px;
+      border-radius: 20px;
+      padding: 24px 20px;
+    }
+    .login-left {
+      padding: 0;
+      background: none;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .login-left img {
+      border-radius: 12px;
+      max-width: 80%;
+      height: auto;
+    }
+    .login-left p {
+      display: none;
+    }
+    .login-right {
+      padding: 0;
+    }
+    .login-right .welcome-label {
+      border-radius: 12px;
+      padding: 6px 16px;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+    .notification {
+      top: 70px;
+      right: 10px;
+      max-width: 80%;
+      font-size: 0.85rem;
+      padding: 12px 16px;
+    }
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body>
+
+<header role="banner">
+  <a href="/" class="logo" aria-label="Home"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 2L1.5 20.29h21L12 2z"/></svg>EmotionSense</a>
+  <!-- <nav class="desktop-nav" role="navigation" aria-label="Primary Navigation">
+    <a href="/" tabindex="0">Home</a>
+    <a href="/about" tabindex="0">About</a>
+    <a href="/contact" tabindex="0">Contact</a>
+  </nav>
+  <button class="mobile-menu-button" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+    <span class="material-icons" aria-hidden="true">menu</span>
+  </button> -->
+</header>
+<!-- 
+<nav class="mobile-nav" id="mobileMenu" role="navigation" aria-label="Mobile navigation menu">
+  <a href="/" tabindex="0">Home</a>
+  <a href="/about" tabindex="0">About</a>
+  <a href="/contact" tabindex="0">Contact</a>
+</nav> -->
+
+<main>
+  <section class="login-card" aria-label="Login form">
+    <div class="login-left">
+      <img
+        src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fb3d0043-ae07-4580-a9a8-26bb4acf3e2c.png"
+        alt="Illustration showing a stylized figure expressing various emotions in vibrant colors"
+      />
+      <p>Login to access our powerful emotion detection capabilities. Improve user experience through real-time emotion analysis and insights.</p>
+    </div>
+    <div class="login-right">
+      <div class="welcome-label" aria-live="polite">Welcome back</div>
+      <h2>Login your account</h2>
+      <form novalidate>
+        <label for="email">Email Id</label>
+        <input id="email" name="email" type="text" autocomplete="email" placeholder="Enter your email" required />
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+        <button type="submit" aria-label="Login to your account">Login</button>
+      </form>
+      <div class="form-footer">
+        <a href="/register" tabindex="0">Register</a>
+        <a href="/forgot-password" tabindex="0">Forgot Password?</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="notification" id="loginNotification" role="alert">
+  <span class="material-icons">error_outline</span>
+  <span id="notificationMessage"></span>
+  <button class="close-btn" aria-label="Close notification">
+    <span class="material-icons">close</span>
+  </button>
+</div>
+
+<script>
+  // DOM queries
+  const menuButton = document.querySelector('.mobile-menu-button');
+  const mobileNav = document.querySelector('.mobile-nav');
+  const notification = document.querySelector('#loginNotification');
+  const notificationMessage = document.querySelector('#notificationMessage');
+  const closeNotification = document.querySelector('.close-btn');
+  const loginForm = document.querySelector('form');
+
+  // Debug: Verify DOM elements
+  console.log('DOM Elements:', { menuButton, mobileNav, notification, notificationMessage, closeNotification, loginForm });
+
+  // Mobile menu functionality
+  if (menuButton) {
+    menuButton.addEventListener('click', () => {
+      const expanded = menuButton.getAttribute('aria-expanded') === 'true';
+      menuButton.setAttribute('aria-expanded', String(!expanded));
+      if (mobileNav) mobileNav.classList.toggle('show');
+      console.log('Mobile menu toggled:', !expanded); // Debug
+    });
+  }
+
+  if (mobileNav) {
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileNav.classList.remove('show');
+        if (menuButton) menuButton.setAttribute('aria-expanded', 'false');
+        console.log('Mobile nav link clicked'); // Debug
+      });
+    });
+  }
+
+  // Notification handling
+  function showNotification(message) {
+    if (notification && notificationMessage) {
+      console.log('Showing notification:', message); // Debug
+      notificationMessage.textContent = message;
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+        console.log('Notification hidden'); // Debug
+      }, 8000); // Increased to 8 seconds for visibility
+    }
+  }
+
+  if (closeNotification) {
+    closeNotification.addEventListener('click', () => {
+      if (notification) notification.classList.remove('show');
+      console.log('Notification closed manually'); // Debug
+    });
+  }
+
+  // Handle form submission with API call
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      console.log('Form submission triggered'); // Debug
+
+      const email = document.querySelector('#email')?.value.trim();
+      const password = document.querySelector('#password')?.value.trim();
+
+      // Client-side validation
+      if (!email || !password) {
+        showNotification('Please fill in all required fields.');
+        console.log('Client-side validation failed: Empty fields'); // Debug
+        return;
+      }
+
+      try {
+        console.log('Sending API request to /login with email:', email); // Debug
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+        console.log('API response:', data); // Debug
+
+        if (response.ok) {
+          console.log('Login successful, redirecting to:', data.redirect || '/home'); // Debug
+          // Ensure session is set before redirect
+          sessionStorage.setItem('user_id', data.user_id || ''); // Temporary storage for demo
+          sessionStorage.setItem('logged_in', 'true');
+          window.location.href = data.redirect || '/home';
+        } else {
+          const errorMessages = {
+            user_not_found: 'Account not registered. Please create an account.',
+            invalid_password: 'Invalid password.',
+            missing_fields: 'Please fill in all required fields.',
+          };
+          showNotification(errorMessages[data.error] || data.message || 'An error occurred during login.');
+          console.log('Login failed:', data.error || data.message); // Debug
+        }
+      } catch (error) {
+        console.error('Login error:', error.message); // Debug
+        showNotification('Failed to connect to server. Please check your network or try again later.');
+      }
+    });
+  }
+</script>

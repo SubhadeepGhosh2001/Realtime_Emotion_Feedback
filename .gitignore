@@ -1,0 +1,26 @@
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+
+# Ignore virtual environment
+venv/
+
+# Ignore train.py
+
+# Ignore all CSV files
+*.csv
+
+# Ignore model checkpoint files
+*.checkp*
+
+# Ignore editor/IDE specific files
+*.vscode/
+*.idea/
+
+# Ignore log files
+*.log
+
+# Ignore macOS system files
+.DS_Store
+
+
