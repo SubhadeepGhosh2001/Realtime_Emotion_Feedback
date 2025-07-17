@@ -20,11 +20,11 @@ A real-time Emotion Detection system using webcam input that analyzes human faci
 
 | Layer          | Technology                 |
 |----------------|----------------------------|
-| Backend        | Python, Flask / FastAPI     |
-| Frontend       | HTML, CSS, JS / React       |
-| ML Model       | OpenCV, TensorFlow/Keras    |
+| Backend        | Python, Flask     |
+| Frontend       | HTML, CSS, JS     |
+| ML Model       | OpenCV, TensorFlow/Keras, NumPy    |
 | Visualization  | Chart.js / Matplotlib       |
-| Database       | SQLite / MongoDB / JSON     |
+| Database       | MySQL     |
 
 ---
 
